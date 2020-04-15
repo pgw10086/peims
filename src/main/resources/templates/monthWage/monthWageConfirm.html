@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'owners','员工月收入确认')}">
+<body>
+<div id="queryInfo" class="container my-5">
+    <div v-bind:class="alerts">
+        <strong>{{msg}}</strong>
+    </div>
+    <hr>
+
+    <div>
+        <form class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="col-3 mb-3">
+                    <label for="id">id
+                        <span class="badge badge-pill badge-danger">required*</span>
+                    </label>
+                    <input v-model="id" id="id" type="text" class="form-control">
+                </div>
+                <div class="col-3 mb-3">
+                    <label for="year">年
+                        <span class="badge badge-pill badge-danger">required*</span>
+                    </label>
+                    <input v-model="year" id="year" type="text" class="form-control">
+                </div>
+                <div class="col-3 mb-3">
+                    <label for="month">月
+                        <span class="badge badge-pill badge-danger">required*</span>
+                    </label>
+                    <input v-model="month" id="month" type="text" class="form-control">
+                </div>
+                <div th:replace="~{fragments/wageConfirm :: wageConfirm}"></div>
+                <div class="col-3 my-4 mb-3 ">
+                    <input data-toggle="modal" data-target="#positionAdd" class="btn btn-info btn-block" type="button"
+                           @click="" value="进入确认页面">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.2/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="/js/judgeIdVue.js"></script>
+<script src="/js/judgeYearVue.js"></script>
+<script src="/js/judgeMonthVue.js"></script>
+<script>
+    var vue = new Vue({
+        mixins: [judgeIdVue, judgeYearVue, judgeMonthVue],
+        el: "#queryInfo",
+        data: {
+            alerts: "alert alert-primary",
+            data: [],
+            msg: '员工月收入确认',
+        },
+        created: function () {
+
+        },
+        methods: {
+
+        },
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Modal -->
+<div th:fragment="taxDelete" class="modal fade" id="taxDelete" data-backdrop="static" tabindex="-1" role="dialog"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">将删除税率项信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="clearRow">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div  v-for="r in row">
+                    <div class="row">
+                        <div class="col-4">id：</div>
+                        <div class="col-8">
+                            <input class="form-control" placeholder="id" v-model="r.taxId" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">开始工资段：</div>
+                        <div class="col-8">
+                            <input class="form-control" placeholder="开始工资段" v-model="r.moneyStart" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">结束工资段：</div>
+                        <div class="col-8">
+                            <input class="form-control" placeholder="结束工资段" v-model="r.moneyEnd" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">税率：</div>
+                        <div class="col-8">
+                            <input class="form-control" placeholder="税率" v-model="r.taxRate" readonly>
+                        </div>
+                    </div>
+                    <hr>
+                    <hr>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="clearRow">关闭</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" @click="deleteTaxes">确认</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var taxDelete = {
+            data: {
+                submitInfo:false,
+            },
+            methods:{
+                deleteTaxes:function(){
+                    if (this.submitInfo === true) {
+                        for (let i = 0; i < this.row.length; i++) {
+                            this.deleteTax(this.row[i].taxId);
+                        }
+                        this.row = this.initialRow;
+                        this.getMessage();
+                    }else {
+                        alert('不可提交');
+                    }
+                },
+                deleteTax:function (taxId) {
+                        axios.delete("https://127.0.0.1:8080/api/v1/taxes/" + taxId)
+                            .then(response => {
+                                this.msg = '删除成功';
+                                this.alerts = 'alert alert-success';
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+
+                },
+            }
+        }
+    </script>
+</div>
+</html>

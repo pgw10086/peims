@@ -1,0 +1,82 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Modal -->
+<div th:fragment="positionUpdate" class="modal fade" id="positionUpdate" data-backdrop="static" tabindex="-1" role="dialog"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">修改岗位工资</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="clearRow">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div v-for="r in row">
+                    <div class="row">
+                        <div class="col-3">岗位id：</div>
+                        <div class="col-9">
+                            <input class="form-control" placeholder="岗位id" v-model="r.postId" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">岗位名称：</div>
+                        <div class="col-9">
+                            <input class="form-control" placeholder="岗位名称" v-model="r.name" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">岗位工资：</div>
+                        <div class="col-9">
+                            <input class="form-control" placeholder="岗位工资" v-model="r.salary">
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="clearRow">关闭</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="putPositions">确认</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var positionUpdate = {
+            data: {
+                submitInfo:false,
+            },
+            methods:{
+                putPositions:function(){
+                    if (this.submitInfo === true) {
+                        console.log(this.row.length);
+                        for (let i = 0; i < this.row.length; i++) {
+                            this.putPosition(this.row[i]);
+                            console.log(i);
+                        }
+                    }else {
+                        alert('不可提交');
+                    }
+                    this.clearRow();
+                    this.getMessage();
+                },
+                putPosition:function (row) {
+                    if (this.submitInfo === true){
+                        axios.put("https://127.0.0.1:8080/api/v1/position", row)
+                            .then(response => {
+                                console.log(response.data);
+                                this.data = response.data;
+                                // console.log(this.msg);
+                                this.msg = '修改成功';
+                                this.alerts = 'alert alert-success';
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    }else {
+                        alert('不可提交');
+                    }
+                }
+            }
+        }
+    </script>
+</div>
+</html>

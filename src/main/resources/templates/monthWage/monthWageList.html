@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'owners','员工月收入确认')}">
+<body>
+<div id="queryInfo" class="container my-5">
+    <div v-bind:class="alerts">
+        <strong>{{msg}}</strong>
+    </div>
+    <hr>
+    <div>
+        <form class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="col-3 mb-3">
+                    <label for="positionId">id
+                        <span class="badge badge-pill badge-primary">可选项</span>
+                    </label>
+                    <input v-model="id" type="text" class="form-control">
+                </div>
+                <div class="col-3 mb-3">
+                    <label for="positionId">年
+                        <span class="badge badge-pill badge-danger">required*</span>
+                    </label>
+                    <input v-model="year" type="text" class="form-control" id="positionId">
+                </div>
+                <div class="col-3 mb-3">
+                    <label for="positionName">月
+                        <span class="badge badge-pill badge-danger">required*</span>
+                    </label>
+                    <input v-model="month" type="text" class="form-control" id="positionName">
+                </div>
+                <div class="col-3 my-4 mb-3 ">
+                    <input class="btn btn-info btn-block" id="select" type="button" v-on:click="getMessage()"
+                           value="查询">
+                </div>
+            </div>
+        </form>
+        <div id="table">
+            <bootstrap-table ref="table" :columns="columns" :data="data" :options="options"></bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/1.14.3/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/bootstrap-table-vue.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.2/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="/js/judgeIdVue.js"></script>
+<script src="/js/judgeYearVue.js"></script>
+<script src="/js/judgeMonthVue.js"></script>
+<script src="/js/optionVue.js"></script>
+<script>
+    var vue = new Vue({
+        mixins: [judgeIdVue, judgeYearVue, judgeMonthVue, optionVue],
+        el: "#queryInfo",
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            alerts: "alert alert-primary",
+            local: 'zh-CN',
+            columns: [
+                {
+                    checkbox: true,
+                },
+                {
+                    field: 'id',
+                    title: '员工id',
+                    sortable: true,
+                },
+                {
+                    field: 'name',
+                    title: '姓名',
+
+                },
+                {
+                    field: 'date',
+                    title: '时间'
+                },
+                {
+                    field: 'salary',
+                    title: '月工资'
+                }
+            ],
+            row: [],
+            newRow: {},
+            data: [],
+            classes: {
+                hover: true,
+                dark: true
+            },
+            options: {
+                search: true,
+                showColumns: true,
+                pagination: true,
+                classes: 'table table-bordered table-hover table-striped',
+            },
+            msg: '',
+            selectInfo: true
+        },
+        created: function () {
+            // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+            // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+            // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+            // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+            // 请参考：https://lodash.com/docs#debounce
+            this.getMessage();
+        },
+        methods: {
+            getSelect: function () {
+                this.row = this.$ref.table.getSelections();
+                console.log(this.row);
+            },
+            getMessage: function () {
+                let url = 'https://127.0.0.1:8080/api/v1/staffWages/' + this.year + "/" + this.month;
+                if(this.judgeId()){
+                    url += "/" + this.id;
+                }
+                this.axiosGet(url);
+            },
+            axiosGet: function (url) {
+                let self = this;
+                console.log(url);
+                axios.get(url)
+                    .then(response => {
+                        console.log(response.data);
+                        this.data = response.data;
+                        // console.log(this.msg);
+                        this.msg = '查询成功';
+                        this.alerts = 'alert alert-success';
+                    })
+                    .catch(function (error) {
+                        self.msg = error.response.data.message;
+                        self.alerts = 'alert alert-danger';
+                        self.data = [];
+                    });
+            }
+        },
+
+    });
+</script>
+</body>
+</html>

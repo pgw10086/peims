@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'owners','员工年收入')}">
+
+<body>
+<div id="queryInfo" class="container my-5">
+    <div v-bind:class="alerts">
+        <strong>{{msg}}</strong>
+    </div>
+    <hr>
+
+    <div>
+        <form class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="col-3 mb-3">
+                    <label for="year">年份
+                        <span class="badge badge-pill badge-danger">required*</span>
+                    </label>
+                    <input v-model="year" type="text" class="form-control" id="year">
+                </div>
+                <div class="col-3 mb-3">
+                    <label for="id">员工id</label>
+                    <input v-model="id" type="text" class="form-control" id="id">
+                </div>
+                <div class="col-3 my-4 mb-3 ">
+                    <input class="btn btn-info btn-block" id="select" type="button" v-on:click="getMessage()"
+                           value="查询">
+                </div>
+            </div>
+
+        </form>
+        <!--        <div class="col-6">-->
+        <!--            <div class="btn-group">-->
+        <!--                <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#myModal">-->
+        <!--                    新增-->
+        <!--                </button>-->
+        <!--                <button type="button" class="btn btn-outline-primary btn-sm" @click="saveRows">修改</button>-->
+        <!--            </div>-->
+        <!--            <button type="button" class="btn btn-outline-warning btn-sm" @click="delRows">删除</button>-->
+        <!--        </div>-->
+        <div id="table">
+            <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/1.14.3/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/bootstrap-table-vue.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.2/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="/js/judgeYearVue.js"></script>
+<script src="/js/judgeIdVue.js"></script>
+<script>
+    var vue = new Vue({
+        mixins: [judgeYearVue, judgeIdVue],
+        el: "#queryInfo",
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            alerts: "alert alert-primary",
+            local: 'zh-CN',
+            columns: [
+                {
+                    checkbox: true,
+                },
+                {
+                    title: '员工ID',
+                    field: 'id',
+                    sortable: true,
+                },
+                {
+                    field: 'name',
+                    title: '姓名',
+
+                },
+                {
+                    field: 'date',
+                    title: '年份'
+                },
+                {
+                    field: 'salary',
+                    title: '总金额',
+                    sortable: true,
+
+                }
+            ],
+            data: [],
+            classes: {
+                hover: true,
+                dark: true
+            },
+            options: {
+                search: true,
+                showColumns: true,
+                pagination: true,
+                classes: 'table table-bordered table-hover table-striped',
+            },
+            msg: '',
+            selectInfo: true
+        },
+        created: function () {
+            // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+            // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+            // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+            // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+            // 请参考：https://lodash.com/docs#debounce
+            this.getMessage();
+        },
+        methods: {
+            getMessage: function () {
+                let url = 'https://127.0.0.1:8080/api/v1/annualIncomes/';
+                let self=this;
+                if (this.judgeYear()) {
+                    url += this.year;
+                    if (this.judgeId()) {
+                        url += '/' + this.id;
+                    }
+                }
+                if (this.idFlag && this.yearFlag) {
+                    axios.get(url)
+                        .then(response => {
+                            console.log(response.data);
+                            this.data = response.data;
+                            console.log(this.msg);
+                            this.msg = '查询成功';
+                            this.alerts = 'alert alert-success';
+                        })
+                        .catch(function (error) {
+                            // console.log(error.response.data);
+                            self.msg = error.response.data.message;
+                            self.alerts = 'alert alert-danger';
+                            self.data = [];
+                        });
+                } else {
+                    let info = "请确认输入参数";
+                    if (!this.yearFlag) {
+                        info += " _年份_ ";
+                    }
+                    if (!this.idFlag) {
+                        info += " _id_ ";
+                    }
+                    this.msg = info + '正确';
+                    this.alerts = 'alert alert-danger';
+                }
+
+            },
+        }
+    });
+</script>
+</body>
+</html>

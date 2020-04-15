@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'owners','岗位工资管理')}">
+<body>
+<div id="queryInfo" class="container my-5">
+    <div v-bind:class="alerts">
+        <strong>{{msg}}</strong>
+    </div>
+    <hr>
+
+    <div>
+        <form class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="col-3 mb-3">
+                    <label for="positionId">岗位id
+                        <span class="badge badge-pill badge-primary">二选一或不输入</span>
+                    </label>
+                    <input v-model="positionId" type="text" class="form-control" id="positionId">
+                </div>
+                <div class="col-3 mb-3">
+                    <label for="positionName">岗位名
+                        <span class="badge badge-pill badge-primary">二选一或不输入</span>
+                    </label>
+                    <input v-model="positionName" type="text" class="form-control" id="positionName">
+                </div>
+                <div class="col-3 my-4 mb-3 ">
+                    <input class="btn btn-info btn-block" id="select" type="button" v-on:click="getMessage()"
+                           value="查询">
+                </div>
+            </div>
+
+        </form>
+        <div class="col-6">
+            <div th:replace="~{fragments/positionUpdate :: positionUpdate}"></div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-info btn-sm" @click="" disabled>
+                    新增
+                </button>
+                <button type="button" data-toggle="modal" data-target="#positionUpdate"
+                        class="btn btn-outline-primary btn-sm" @click="getSelect">修改
+                </button>
+            </div>
+            <button type="button" class="btn btn-outline-warning btn-sm" disabled>删除</button>
+        </div>
+        <div id="table">
+            <bootstrap-table ref="pwTable" :columns="columns" :data="data" :options="options"></bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/1.14.3/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/bootstrap-table-vue.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/1.16.0/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.2/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="/js/judgePositionIdVue.js"></script>
+<script src="/js/optionVue.js"></script>
+<script>
+    var vue = new Vue({
+        mixins: [judgePositionIdVue, optionVue,positionUpdate],
+        el: "#queryInfo",
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            alerts: "alert alert-primary",
+            local: 'zh-CN',
+            columns: [
+                {
+                    checkbox: true,
+                },
+                {
+                    field: 'postId',
+                    title: '岗位id',
+                    sortable: true,
+                },
+                {
+                    field: 'name',
+                    title: '岗位名称',
+
+                },
+                {
+                    field: 'description',
+                    title: '岗位描述',
+                    visible:false
+                },
+                {
+                    field: 'salary',
+                    title: '岗位工资'
+                }
+            ],
+            row: {
+
+            },
+            newRow: {
+                postId:'',
+                name:'',
+                salary:'',
+            },
+            data: [],
+            classes: {
+                hover: true,
+                dark: true
+            },
+            options: {
+                search: true,
+                showColumns: true,
+                pagination: true,
+                classes: 'table table-bordered table-hover table-striped',
+            },
+            msg: '',
+            positionName: '',
+            selectInfo: true
+        },
+        created: function () {
+            // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+            // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+            // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+            // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+            // 请参考：https://lodash.com/docs#debounce
+            this.getMessage();
+        },
+        methods: {
+            clearRow:function(){
+                this.row = [];
+            },
+            getSelect: function () {
+                let selectInfo = this.$refs.pwTable.getSelections();
+                if (selectInfo.length >= 1) {
+                    this.row = selectInfo;
+                    this.submitInfo = true;
+                } else {
+                    this.msg = '请选择一行修改';
+                    alert('请选择一行修改');
+                    this.submitInfo = false;
+                }
+                // console.log(this.row)
+                // alert(this.row[0])
+            },
+            getMessage: function () {
+                let url = 'https://127.0.0.1:8080/api/v1/position';
+                if (this.positionId !== '' && this.positionName !== '') {
+                    this.alerts = 'alert alert-danger';
+                    this.msg = '请确认只有一个参数有值';
+                } else if (this.positionName !== '') {
+                    url += '?name=' + this.positionName;
+                    this.axiosGet(url);
+                } else {
+                    if (this.judgepositionId()) {
+                        url += '?id=' + this.positionId;
+                    }
+                    this.axiosGet(url);
+                }
+            },
+            axiosGet: function (url) {
+                console.log(url);
+                axios.get(url)
+                    .then(response => {
+                        console.log(response.data);
+                        this.data = response.data;
+                        // console.log(this.msg);
+                        this.msg = '查询成功';
+                        this.alerts = 'alert alert-success';
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>
