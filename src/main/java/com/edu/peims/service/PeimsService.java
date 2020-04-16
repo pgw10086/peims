@@ -1,5 +1,6 @@
 package com.edu.peims.service;
 
+import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
 import com.edu.peims.Exception.UserExecption.UserNotFoundException;
 import com.edu.peims.model.*;
 
@@ -23,6 +24,6 @@ public interface PeimsService {
     public Collection<Position> findPositionByName(String name);
     public Collection<Position> findPositionById(int id);
     public User findUserById(int id) throws UserNotFoundException;
-    public ConfirmedInfo getUnConfirmedMonthWage(int id,String date) throws UserNotFoundException;
-
+    public ConfirmedInfo getUnConfirmedMonthWage(int id,String date) throws UserNotFoundException, TaxNotFoundException;
+    public Tax findWageTax(float wage) throws TaxNotFoundException;
 }

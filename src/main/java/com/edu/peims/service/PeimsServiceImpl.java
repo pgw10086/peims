@@ -1,5 +1,6 @@
 package com.edu.peims.service;
 
+import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
 import com.edu.peims.Exception.UserExecption.UserNotFoundException;
 import com.edu.peims.model.*;
 import com.edu.peims.repository.PositionRepository;
@@ -154,15 +155,16 @@ public class PeimsServiceImpl implements PeimsService {
     @Override
     public User findUserById(int id) throws UserNotFoundException {
         User user = userRepo.findById(id).orElse(null);
-        if (user == null){
+        if (user == null) {
             throw new UserNotFoundException();
-        }else {
+        } else {
             return user;
         }
     }
 
     @Override
-    public ConfirmedInfo getUnConfirmedMonthWage(int id, String date) throws UserNotFoundException {
+    public ConfirmedInfo getUnConfirmedMonthWage(int id, String date)
+            throws UserNotFoundException, TaxNotFoundException {
         //TODO
         User user = findUserById(id);
         Position position = findPositionById(user.getPostionId()).iterator().next();
@@ -174,9 +176,19 @@ public class PeimsServiceImpl implements PeimsService {
         confirmedInfo.setPostWage(position.getSalary());
         confirmedInfo.setAbsence(0);
         float wageTotal = confirmedInfo.getSeniority() * 10 + confirmedInfo.getPostWage()
-                - confirmedInfo.getAbsence() *10;
-        confirmedInfo.setTax(taxRepo.findWageTax(wageTotal).getTaxRate());
+                - confirmedInfo.getAbsence() * 10;
+        confirmedInfo.setTax(findWageTax(wageTotal).getTaxRate());
         confirmedInfo.setDate(date);
         return confirmedInfo;
+    }
+
+    @Override
+    public Tax findWageTax(float wage) throws TaxNotFoundException {
+        Tax tax = taxRepo.findWageTax(wage);
+        if (tax == null) {
+            throw new TaxNotFoundException();
+        } else {
+            return tax;
+        }
     }
 }

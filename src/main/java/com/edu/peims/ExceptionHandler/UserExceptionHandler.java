@@ -1,5 +1,6 @@
-package com.edu.peims.web;
+package com.edu.peims.ExceptionHandler;
 
+import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
 import com.edu.peims.Exception.UserExecption.UserException;
 import com.edu.peims.Exception.UserExecption.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -12,18 +13,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class ControllerExceptionHandler {
+public class UserExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,Object> handlerStudentNotFound(UserNotFoundException ex){
+    public Map<String, Object> handlerStudentNotFound(UserNotFoundException ex) {
         return createResponse(ex);
     }
 
-    private Map<String,Object> createResponse(UserException ex){
-        Map<String,Object> map = new HashMap<>();
-        map.put("code",ex.getCode());
-        map.put("message",ex.getMessage());
+
+
+    private Map<String, Object> createResponse(UserException ex) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", ex.getCode());
+        map.put("message", ex.getMessage());
         return map;
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.edu.peims.rest;
 
+import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
 import com.edu.peims.Exception.UserExecption.UserNotFoundException;
 import com.edu.peims.model.ConfirmedInfo;
 import com.edu.peims.model.Wage;
@@ -53,7 +54,8 @@ public class WageRestController {
     @GetMapping("")
     @ApiOperation(value = "获取未进入数据库的员工工资信息")
     public ResponseEntity<ConfirmedInfo> getUnConfirmedMonthWage(
-            @Param("year") String year, @Param("month") String month, @Param("id") int id) throws UserNotFoundException {
+            @Param("year") String year, @Param("month") String month, @Param("id") int id)
+            throws UserNotFoundException, TaxNotFoundException {
         String date = year + "-" + month;
         return new ResponseEntity<>(peimsService.getUnConfirmedMonthWage(id,date), HttpStatus.OK);
     }
