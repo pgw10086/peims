@@ -1,4 +1,4 @@
-package com.edu.peims.Exception.TaxExecption;
+package com.edu.peims.Exception.TaxException;
 
 public class TaxException extends Exception{
     protected int code;

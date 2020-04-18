@@ -1,7 +1,8 @@
 package com.edu.peims.service;
 
-import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
-import com.edu.peims.Exception.UserExecption.UserNotFoundException;
+import com.edu.peims.Exception.TaxException.TaxNotFoundException;
+import com.edu.peims.Exception.UserException.UserNotFoundException;
+import com.edu.peims.Exception.WageException.WageNotFoundException;
 import com.edu.peims.model.*;
 import com.edu.peims.repository.PositionRepository;
 import com.edu.peims.repository.TaxRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class PeimsServiceImpl implements PeimsService {
@@ -66,7 +66,7 @@ public class PeimsServiceImpl implements PeimsService {
                 monthWages) {
             User user = null;
             try {
-                user = findUserById(wage.getId());
+                user = findUserById(wage.getUserId());
             } catch (UserNotFoundException e) {
                 e.printStackTrace();
             }
@@ -81,11 +81,15 @@ public class PeimsServiceImpl implements PeimsService {
     }
 
     @Override
-    public WageInformation findMonthWageById(String date, int id) throws UserNotFoundException {
+    public WageInformation findMonthWageById(String date, int id)
+            throws UserNotFoundException, WageNotFoundException {
         User user = findUserById(id);
         Wage wage = wageRepo.findMonthWageById(date, id);
+        if (wage == null){
+            throw new WageNotFoundException();
+        }
         WageInformation wageInfo = new WageInformation();
-        wageInfo.setId(wage.getId());
+        wageInfo.setId(wage.getUserId());
         wageInfo.setName(user.getName());
         wageInfo.setDate(wage.getWageDate());
         wageInfo.setSalary(wage.getWageMoney());
@@ -94,6 +98,15 @@ public class PeimsServiceImpl implements PeimsService {
 
     @Override
     public Wage addWage(Wage wage) {
+        System.out.println(wage.getUserId());
+        System.out.println(wage.getWageDate());
+        System.out.println(wage.getWageTax());
+        System.out.println(wage.getWageMoney());
+        System.out.println(wage.getWageAbsenteeism());
+        System.out.println(wage.getWageMerits());
+        System.out.println(wage.getWageSeniority());
+        System.out.println(wage.getWagePosition());
+        System.out.println("add");
         return wageRepo.save(wage);
     }
 

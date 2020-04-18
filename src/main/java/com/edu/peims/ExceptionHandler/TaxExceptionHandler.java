@@ -1,8 +1,7 @@
 package com.edu.peims.ExceptionHandler;
 
-import com.edu.peims.Exception.TaxExecption.TaxException;
-import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
-import com.edu.peims.Exception.UserExecption.UserException;
+import com.edu.peims.Exception.TaxException.TaxException;
+import com.edu.peims.Exception.TaxException.TaxNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

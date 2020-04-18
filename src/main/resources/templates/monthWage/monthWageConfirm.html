@@ -32,7 +32,7 @@
                 <div th:replace="~{fragments/wageConfirm :: wageConfirm}"></div>
                 <div class="col-3 my-4 mb-3 ">
                     <input data-toggle="modal" data-target="#positionAdd" class="btn btn-info btn-block" type="button"
-                           @click="" value="进入确认页面">
+                           @click="getMessage" value="进入确认页面">
                 </div>
             </div>
         </form>
@@ -49,18 +49,81 @@
 <script src="/js/judgeMonthVue.js"></script>
 <script>
     var vue = new Vue({
-        mixins: [judgeIdVue, judgeYearVue, judgeMonthVue],
+        mixins: [judgeIdVue, judgeYearVue, judgeMonthVue, wageConfirm],
         el: "#queryInfo",
         data: {
             alerts: "alert alert-primary",
             data: [],
+            flag:"",
             msg: '员工月收入确认',
         },
         created: function () {
 
         },
         methods: {
+            checkExistence: function () {
+                let url = 'https://127.0.0.1:8080/api/v1/staffWages/'
+                    + this.year + "/" + this.month + "/" + this.id;
+                let self = this;
+                axios.get(url)
+                    .then(response => {
+                        self.flag = "existed";
+                        alert("existed")
+                    })
+                    .catch(function (error) {
+                        self.flag = error.response.data.code + "";
+                        alert("notExisted")
+                    });
+            },
 
+
+            getMessage: function () {
+                let url = 'https://127.0.0.1:8080/api/v1/staffWages/'
+                    + this.year + "/" + this.month + "/" + this.id;
+                let self = this;
+                axios.get(url)
+                    .then(response => {
+                        self.alerts = 'alert alert-danger';
+                        this.msg = "该员工该时间段的月工资已存入数据库";
+                        this.submitFlag = false;
+                    })
+                    .catch(function (error) {
+                        let code = error.response.data.code;
+                        if (code === 611) {
+                            self.msg = "不存在该员工id";
+                            self.alerts = 'alert alert-danger';
+                            self.submitFlag = false;
+                        } else if (code === 621) {
+                            self.submitFlag = true;
+                            self.queryWage();
+                        }
+                    });
+            },
+
+            queryWage: function () {
+                let self = this;
+                axios.get("https://127.0.0.1:8080/api/v1/staffWages", {
+                    params: {
+                        id: this.id,
+                        year: this.year,
+                        month: this.month
+                    }
+                })
+                    .then(response => {
+                        this.wageConfirm = response.data;
+                        this.wageConfirm.seniorityWage = this.wageConfirm.seniority * 10;
+                        this.wageConfirm.absenceWage = this.wageConfirm.absence * 10;
+                        this.wageConfirm.totalWage = this.wageConfirm.seniorityWage -
+                            this.wageConfirm.absenceWage + this.wageConfirm.postWage;
+                        this.wageConfirm.taxWage = this.wageConfirm.totalWage * (1 - this.wageConfirm.tax);
+                    })
+                    .catch(function (error) {
+                        self.alerts = 'alert alert-danger';
+                        self.msg = error.response.data.message;
+                        self.submitFlag = false;
+                        alert(self.msg);
+                    })
+            }
         },
     });
 </script>

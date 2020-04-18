@@ -1,11 +1,11 @@
 package com.edu.peims.rest;
 
-import com.edu.peims.Exception.TaxExecption.TaxNotFoundException;
-import com.edu.peims.Exception.UserExecption.UserNotFoundException;
+import com.edu.peims.Exception.TaxException.TaxNotFoundException;
+import com.edu.peims.Exception.UserException.UserNotFoundException;
+import com.edu.peims.Exception.WageException.WageNotFoundException;
 import com.edu.peims.model.ConfirmedInfo;
 import com.edu.peims.model.Wage;
 import com.edu.peims.model.WageInformation;
-import com.edu.peims.repository.WageRepository;
 import com.edu.peims.service.PeimsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +44,8 @@ public class WageRestController {
     @GetMapping("/{year}/{month}/{id}")
     @ApiOperation(value = "查询传入ID员工已确认的月工资")
     public ResponseEntity<Collection<WageInformation>> getMonthWage(
-            @PathVariable String year, @PathVariable String month, @PathVariable int id) throws UserNotFoundException {
+            @PathVariable String year, @PathVariable String month, @PathVariable int id)
+            throws UserNotFoundException, WageNotFoundException {
         String date = year + "-" + month;
         Collection<WageInformation> wageInfo = new ArrayList<>();
         wageInfo.add(peimsService.findMonthWageById(date, id));

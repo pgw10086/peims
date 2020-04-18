@@ -1,4 +1,4 @@
-package com.edu.peims.Exception.UserExecption;
+package com.edu.peims.Exception.UserException;
 
 public class UserException extends Exception{
     protected int code;

@@ -4,9 +4,11 @@ import com.edu.peims.model.Wage;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
+@Repository
 public interface WageRepository extends CrudRepository<Wage,Integer> {
 
     @Query("select * from wage where PK_Wage_Date_s like :year and PK_FK_Wage_Id_nb = :id;")

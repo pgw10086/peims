@@ -1,6 +1,6 @@
 package com.edu.peims.rest;
 
-import com.edu.peims.Exception.UserExecption.UserNotFoundException;
+import com.edu.peims.Exception.UserException.UserNotFoundException;
 import com.edu.peims.model.WageInformation;
 import com.edu.peims.service.PeimsService;
 import io.swagger.annotations.Api;
