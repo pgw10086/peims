@@ -1,12 +1,16 @@
 package com.edu.peims.rest;
 
+import com.edu.peims.Exception.TypeException.TypeException;
 import com.edu.peims.model.Position;
 import com.edu.peims.service.PeimsService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/position")
@@ -33,7 +37,10 @@ public class PositionRestController {
 
     @PutMapping("")
     @ApiOperation(value = "更改职位工资")
-    public ResponseEntity<Position> updatePostSalary(@RequestBody Position position) {
+    public ResponseEntity<Position> updatePostSalary(@RequestBody @Valid Position position, BindingResult result) throws TypeException {
+        if (result.hasErrors()){
+            throw new TypeException();
+        }
         return new ResponseEntity<>(peimsService.updatePosition(position), HttpStatus.OK);
     }
 }

@@ -1,9 +1,7 @@
 package com.edu.peims.rest;
 
-import com.edu.peims.Exception.TaxException.TaxAddMemberException;
+import com.edu.peims.Exception.TypeException.TypeException;
 import com.edu.peims.model.Tax;
-import com.edu.peims.model.Wage;
-import com.edu.peims.model.WageInformation;
 import com.edu.peims.service.PeimsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,9 +41,9 @@ public class TaxRestController {
 
     @PostMapping("")
     @ApiOperation(value = "添加税率项")
-    public ResponseEntity<Tax> addTax(@RequestBody @Valid Tax tax, BindingResult result) throws TaxAddMemberException {
+    public ResponseEntity<Tax> addTax(@RequestBody @Valid Tax tax, BindingResult result) throws TypeException {
         if (result.hasErrors()) {
-            throw new TaxAddMemberException();
+            throw new TypeException();
         } else {
             return new ResponseEntity<>(peimsService.addTax(tax), HttpStatus.OK);
         }
@@ -53,9 +51,9 @@ public class TaxRestController {
 
     @PutMapping("")
     @ApiOperation(value = "更新税率项")
-    public ResponseEntity<Tax> updateTax(@RequestBody @Valid Tax tax, BindingResult result) throws TaxAddMemberException {
+    public ResponseEntity<Tax> updateTax(@RequestBody @Valid Tax tax, BindingResult result) throws TypeException {
         if (result.hasErrors()) {
-            throw new TaxAddMemberException();
+            throw new TypeException();
         } else {
             return new ResponseEntity<>(peimsService.updateTax(tax), HttpStatus.OK);
         }

@@ -47,18 +47,16 @@
             methods:{
                 putPositions:function(){
                     if (this.submitInfo === true) {
-                        console.log(this.row.length);
                         for (let i = 0; i < this.row.length; i++) {
                             this.putPosition(this.row[i]);
-                            console.log(i);
                         }
                     }else {
                         alert('不可提交');
                     }
                     this.clearRow();
-                    this.getMessage();
                 },
                 putPosition:function (row) {
+                    let self = this;
                     if (this.submitInfo === true){
                         axios.put("https://127.0.0.1:8080/api/v1/position", row)
                             .then(response => {
@@ -69,7 +67,13 @@
                                 this.alerts = 'alert alert-success';
                             })
                             .catch(function (error) {
-                                console.log(error);
+                                if (error.response.data.message.split(" ")[0] == 'JSON'){
+                                    self.msg = '格式错误';
+                                    self.alerts = 'alert alert-danger';
+                                }else {
+                                    self.msg = error.response.data.message;
+                                    self.alerts = 'alert alert-danger';
+                                }
                             });
                     }else {
                         alert('不可提交');
