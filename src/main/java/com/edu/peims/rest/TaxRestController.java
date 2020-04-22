@@ -1,5 +1,6 @@
 package com.edu.peims.rest;
 
+import com.edu.peims.Exception.TaxException.TaxAddMemberException;
 import com.edu.peims.model.Tax;
 import com.edu.peims.model.Wage;
 import com.edu.peims.model.WageInformation;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,14 +43,22 @@ public class TaxRestController {
 
     @PostMapping("")
     @ApiOperation(value = "添加税率项")
-    public ResponseEntity<Tax> addTax(@RequestBody @Valid Tax tax) {
-        return new ResponseEntity<>(peimsService.addTax(tax), HttpStatus.OK);
+    public ResponseEntity<Tax> addTax(@RequestBody @Valid Tax tax, BindingResult result) throws TaxAddMemberException {
+        if (result.hasErrors()) {
+            throw new TaxAddMemberException();
+        } else {
+            return new ResponseEntity<>(peimsService.addTax(tax), HttpStatus.OK);
+        }
     }
 
     @PutMapping("")
     @ApiOperation(value = "更新税率项")
-    public ResponseEntity<Tax> updateTax(@RequestBody @Valid Tax tax) {
-        return new ResponseEntity<>(peimsService.updateTax(tax), HttpStatus.OK);
+    public ResponseEntity<Tax> updateTax(@RequestBody @Valid Tax tax, BindingResult result) throws TaxAddMemberException {
+        if (result.hasErrors()) {
+            throw new TaxAddMemberException();
+        } else {
+            return new ResponseEntity<>(peimsService.updateTax(tax), HttpStatus.OK);
+        }
     }
 
     @DeleteMapping("/{id}")

@@ -53,18 +53,16 @@
             methods:{
                 putTaxes:function(){
                     if (this.submitInfo === true) {
-                        console.log(this.row.length);
                          for (let i = 0; i < this.row.length; i++) {
                              this.putTax(this.row[i]);
-                             console.log(i);
                          }
                     }else {
                         alert('不可提交');
                     }
                     this.row = this.initialRow;
-                    this.getMessage();
                 },
                 putTax:function (row) {
+                    let self = this;
                         axios.put("https://127.0.0.1:8080/api/v1/taxes",row)
                             .then(response => {
                                 console.log(response.data);
@@ -74,10 +72,14 @@
                                 this.alerts = 'alert alert-success';
                             })
                             .catch(function (error) {
-                                console.log(error);
+                                if (error.response.data.message.split(" ")[0] == 'JSON'){
+                                    self.msg = '格式错误';
+                                    self.alerts = 'alert alert-danger';
+                                }else {
+                                    self.msg = error.response.data.message;
+                                    self.alerts = 'alert alert-danger';
+                                }
                             });
-
-                    this.getMessage();
                 }
             }
         }

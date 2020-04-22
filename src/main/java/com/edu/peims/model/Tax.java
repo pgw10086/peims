@@ -15,10 +15,11 @@ public class Tax {
     @Id
     @Column("PK_Tax_Id_n")
     private int taxId;// 税率表id
-    @NotNull(message = "工资开始段为空")
+    @Min(value = 0,message = "不可小于0")
     @Column("Tax_MoneyStart_f")
     private float moneyStart;// 工资范围：开始
     @NotNull(message = "工资结束段为空")
+    @Min(value = 0,message = "不可小于0")
     @Column("Tax_MoneyEnd_f")
     private float moneyEnd;// 工资范围：结束
     @NotNull(message = "工资税率为空")

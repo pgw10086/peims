@@ -1,5 +1,6 @@
 package com.edu.peims.ExceptionHandler;
 
+import com.edu.peims.Exception.TaxException.TaxAddMemberException;
 import com.edu.peims.Exception.TaxException.TaxException;
 import com.edu.peims.Exception.TaxException.TaxNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,13 @@ public class TaxExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Object> handlerTaxNotFound(TaxNotFoundException ex) {
+        return createResponse(ex);
+    }
+
+    @ExceptionHandler(TaxAddMemberException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handlerTaxAddMember(TaxAddMemberException ex) {
         return createResponse(ex);
     }
 
