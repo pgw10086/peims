@@ -1,10 +1,10 @@
-package com.edu.peims.Exception.TaxException;
+package com.edu.peims.exception.wage;
 
-public class TaxException extends Exception{
+public class WageException extends Exception{
     protected int code;
     protected String message;
 
-    public TaxException(int code, String message) {
+    public WageException(int code, String message) {
         this.code = code;
         this.message = message;
     }

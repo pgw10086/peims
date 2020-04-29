@@ -1,6 +1,7 @@
 package com.edu.peims.rest;
 
-import com.edu.peims.Exception.TypeException.TypeException;
+import com.edu.peims.exception.tax.TaxException;
+import com.edu.peims.exception.type.TypeException;
 import com.edu.peims.model.Tax;
 import com.edu.peims.service.PeimsService;
 import io.swagger.annotations.Api;
@@ -41,7 +42,7 @@ public class TaxRestController {
 
     @PostMapping("")
     @ApiOperation(value = "添加税率项")
-    public ResponseEntity<Tax> addTax(@RequestBody @Valid Tax tax, BindingResult result) throws TypeException {
+    public ResponseEntity<Tax> addTax(@RequestBody @Valid Tax tax, BindingResult result) throws TypeException, TaxException {
         if (result.hasErrors()) {
             throw new TypeException();
         } else {
@@ -51,7 +52,7 @@ public class TaxRestController {
 
     @PutMapping("")
     @ApiOperation(value = "更新税率项")
-    public ResponseEntity<Tax> updateTax(@RequestBody @Valid Tax tax, BindingResult result) throws TypeException {
+    public ResponseEntity<Tax> updateTax(@RequestBody @Valid Tax tax, BindingResult result) throws TypeException, TaxException {
         if (result.hasErrors()) {
             throw new TypeException();
         } else {

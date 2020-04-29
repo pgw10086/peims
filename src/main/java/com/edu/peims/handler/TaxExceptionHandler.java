@@ -1,7 +1,8 @@
-package com.edu.peims.ExceptionHandler;
+package com.edu.peims.handler;
 
-import com.edu.peims.Exception.TaxException.TaxException;
-import com.edu.peims.Exception.TaxException.TaxNotFoundException;
+import com.edu.peims.exception.tax.TaxException;
+import com.edu.peims.exception.tax.TaxExistedException;
+import com.edu.peims.exception.tax.TaxNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +21,14 @@ public class TaxExceptionHandler {
     public Map<String, Object> handlerTaxNotFound(TaxNotFoundException ex) {
         return createResponse(ex);
     }
+
+    @ExceptionHandler(TaxExistedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handlerTaxExisted(TaxExistedException ex) {
+        return createResponse(ex);
+    }
+
 
     private Map<String, Object> createResponse(TaxException ex) {
         Map<String, Object> map = new HashMap<>();

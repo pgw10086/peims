@@ -1,4 +1,4 @@
-package com.edu.peims.Exception.UserException;
+package com.edu.peims.exception.user;
 
 public class UserNotFoundException extends UserException{
     public UserNotFoundException() {

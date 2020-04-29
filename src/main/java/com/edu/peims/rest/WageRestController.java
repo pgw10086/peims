@@ -1,8 +1,8 @@
 package com.edu.peims.rest;
 
-import com.edu.peims.Exception.TaxException.TaxNotFoundException;
-import com.edu.peims.Exception.UserException.UserNotFoundException;
-import com.edu.peims.Exception.WageException.WageNotFoundException;
+import com.edu.peims.exception.tax.TaxNotFoundException;
+import com.edu.peims.exception.user.UserNotFoundException;
+import com.edu.peims.exception.wage.WageNotFoundException;
 import com.edu.peims.model.ConfirmedInfo;
 import com.edu.peims.model.Wage;
 import com.edu.peims.model.WageInformation;

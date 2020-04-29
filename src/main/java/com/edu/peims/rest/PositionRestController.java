@@ -1,6 +1,6 @@
 package com.edu.peims.rest;
 
-import com.edu.peims.Exception.TypeException.TypeException;
+import com.edu.peims.exception.type.TypeException;
 import com.edu.peims.model.Position;
 import com.edu.peims.service.PeimsService;
 import io.swagger.annotations.ApiOperation;

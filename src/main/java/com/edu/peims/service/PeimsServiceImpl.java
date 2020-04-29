@@ -1,8 +1,10 @@
 package com.edu.peims.service;
 
-import com.edu.peims.Exception.TaxException.TaxNotFoundException;
-import com.edu.peims.Exception.UserException.UserNotFoundException;
-import com.edu.peims.Exception.WageException.WageNotFoundException;
+import com.edu.peims.exception.tax.TaxException;
+import com.edu.peims.exception.tax.TaxExistedException;
+import com.edu.peims.exception.tax.TaxNotFoundException;
+import com.edu.peims.exception.user.UserNotFoundException;
+import com.edu.peims.exception.wage.WageNotFoundException;
 import com.edu.peims.model.*;
 import com.edu.peims.repository.PositionRepository;
 import com.edu.peims.repository.TaxRepository;
@@ -111,13 +113,30 @@ public class PeimsServiceImpl implements PeimsService {
     }
 
     @Override
-    public Tax addTax(Tax tax) {
+    public Tax addTax(Tax tax) throws TaxException {
+        judgeTax(findAllTax(),tax);
         return taxRepo.save(tax);
     }
 
     @Override
-    public Tax updateTax(Tax tax) {
+    public Tax updateTax(Tax tax) throws TaxException {
+        Collection<Tax> taxes = findAllTax();
+        taxes.removeIf(t -> t.getTaxId() == tax.getTaxId());
+        judgeTax(taxes,tax);
         return taxRepo.save(tax);
+    }
+
+    public void judgeTax(Collection<Tax> taxes,Tax tax) throws TaxException {
+        for (Tax t:
+             taxes) {
+            if (tax.getMoneyStart() <=t.getMoneyStart() ||
+                    (tax.getMoneyStart() > t.getMoneyStart() && tax.getMoneyStart() <= t.getMoneyEnd())){
+                if (tax.getMoneyEnd() >= t.getMoneyEnd() ||
+                        (tax.getMoneyEnd() > t.getMoneyStart() && tax.getMoneyEnd() < t.getMoneyEnd())) {
+                    throw new TaxExistedException();
+                }
+            }
+        }
     }
 
     @Override

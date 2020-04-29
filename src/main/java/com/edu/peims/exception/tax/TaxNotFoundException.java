@@ -1,4 +1,4 @@
-package com.edu.peims.Exception.TaxException;
+package com.edu.peims.exception.tax;
 
 public class TaxNotFoundException extends TaxException {
     public TaxNotFoundException() {

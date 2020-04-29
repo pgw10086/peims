@@ -1,15 +1,10 @@
-package com.edu.peims.Exception.TypeException;
+package com.edu.peims.exception.user;
 
-public class TypeException extends Exception{
+public class UserException extends Exception{
     protected int code;
     protected String message;
 
-    public TypeException() {
-        this.code = 901;
-        this.message = "类型不符合要求";
-    }
-
-    public TypeException(int code, String message) {
+    public UserException(int code, String message) {
         this.code = code;
         this.message = message;
     }

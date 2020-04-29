@@ -1,4 +1,4 @@
-package com.edu.peims.Exception.WageException;
+package com.edu.peims.exception.wage;
 
 public class WageNotFoundException extends WageException{
 
