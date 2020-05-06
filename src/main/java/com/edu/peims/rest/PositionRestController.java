@@ -30,7 +30,6 @@ public class PositionRestController {
         } else if (null == name) {
             return peimsService.findPositionById(Integer.parseInt(id));
         } else {
-            //TODO
             return null;
         }
     }

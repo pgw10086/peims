@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout (~{::body},'owners','员工月收入确认')}">
+      th:replace="~{fragments/layout :: layout (~{::body},'owners','税率查询')}">
 <body>
 <div id="queryInfo" class="container my-5">
     <div v-bind:class="alerts">
@@ -12,13 +12,13 @@
             <div class="form-row">
                 <div class="col-3 mb-3">
                     <label for="startWage">开始工资段
-                        <span class="badge badge-pill badge-primary">二选一或不输入</span>
+                        <span class="badge badge-pill badge-primary">正整数</span>
                     </label>
                     <input v-model="startWage" type="text" class="form-control" id="startWage">
                 </div>
                 <div class="col-3 mb-3">
                     <label for="endWage">结束工资段
-                        <span class="badge badge-pill badge-primary">二选一或不输入</span>
+                        <span class="badge badge-pill badge-primary">正整数</span>
                     </label>
                     <input v-model="endWage" type="text" class="form-control" id="endWage">
                 </div>
@@ -162,15 +162,23 @@
             //     // alert(this.row[0])
             // },
             getMessage: function () {
-                let url = 'https://127.0.0.1:8080/api/v1/taxes';
-                if (this.startWage !== '' && this.endWage !== '') {
-                    url += '?start=' + this.startWage + "&end=" + this.endWage;
-                } else if (this.startWage !== '') {
-                    url += '?start=' + this.startWage;
-                } else if (this.endWage !== '') {
-                    url += '?end=' + this.endWage;
+                let numReg = /^\d*$/;
+                if ((numReg.test(this.startWage) || this.startWage === '')
+                &&(numReg.test(this.endWage) || this.endWage === '')){
+                    let url = 'https://127.0.0.1:8080/api/v1/taxes';
+                    if (this.startWage !== '' && this.endWage !== '') {
+                        url += '?start=' + this.startWage + "&end=" + this.endWage;
+                    } else if (this.startWage !== '') {
+                        url += '?start=' + this.startWage;
+                    } else if (this.endWage !== '') {
+                        url += '?end=' + this.endWage;
+                    }
+                    this.axiosGet(url);
+                }else {
+                    this.msg = '输入有误';
+                    this.alerts = 'alert alert-danger';
                 }
-                this.axiosGet(url);
+
             },
             axiosGet: function (url) {
                 console.log(url);

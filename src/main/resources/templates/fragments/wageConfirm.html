@@ -107,7 +107,7 @@
 
                 postWageConfirm: function () {
 
-                    if (this.submitFlag){
+                    if (this.idFlag && this.yearFlag && this.monthFlag && this.submitFlag){
                         let self = this;
                         this.subObj.userId = this.wageConfirm.id;
                         this.subObj.wageSeniority = this.wageConfirm.seniorityWage;

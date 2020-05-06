@@ -1,6 +1,6 @@
 var judgeMonthVue = {
     data: {
-        month: '12',
+        month: '',
         monthFlag:false
     },
     watch: {
@@ -19,17 +19,17 @@ var judgeMonthVue = {
                 if (parseInt(this.month) >= parseInt('01') &&
                     parseInt(this.month) <= parseInt('12')) {
                     this.msg = '月份输入正确！！！';
-                    this.yearFlag = true;
+                    this.monthFlag = true;
                     this.alerts = 'alert alert-success';
                     return true;
                 } else {
                     this.msg = '输入不在范围内(01-12)';
-                    this.yearFlag = false;
+                    this.monthFlag = false;
                     this.alerts = 'alert alert-warning';
                 }
             } else {
                 this.msg = '请输入01~12间的数';
-                this.yearFlag = false;
+                this.monthFlag = false;
                 this.alerts = 'alert alert-warning';
             }
             return false;

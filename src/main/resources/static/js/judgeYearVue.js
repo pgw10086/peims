@@ -1,7 +1,7 @@
 var date = new Date();
 var judgeYearVue = {
     data: {
-        year: date.getFullYear() - 1,
+        year: '',
         yearFlag:false
     },
     watch: {

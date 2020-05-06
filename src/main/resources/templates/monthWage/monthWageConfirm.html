@@ -54,7 +54,7 @@
         data: {
             alerts: "alert alert-primary",
             data: [],
-            flag:"",
+            flag: "",
             msg: '员工月收入确认',
         },
         created: function () {
@@ -76,28 +76,42 @@
                     });
             },
 
-
             getMessage: function () {
-                let url = 'https://127.0.0.1:8080/api/v1/staffWages/'
-                    + this.year + "/" + this.month + "/" + this.id;
-                let self = this;
-                axios.get(url)
-                    .then(response => {
-                        self.alerts = 'alert alert-danger';
-                        this.msg = "该员工该时间段的月工资已存入数据库";
-                        this.submitFlag = false;
-                    })
-                    .catch(function (error) {
-                        let code = error.response.data.code;
-                        if (code === 611) {
-                            self.msg = "不存在该员工id";
+                if (this.idFlag && this.yearFlag && this.monthFlag) {
+                    let url = 'https://127.0.0.1:8080/api/v1/staffWages/'
+                        + this.year + "/" + this.month + "/" + this.id;
+                    let self = this;
+                    axios.get(url)
+                        .then(response => {
                             self.alerts = 'alert alert-danger';
-                            self.submitFlag = false;
-                        } else if (code === 621) {
-                            self.submitFlag = true;
-                            self.queryWage();
-                        }
-                    });
+                            this.msg = "该员工该时间段的月工资已存入数据库";
+                            this.submitFlag = false;
+                        })
+                        .catch(function (error) {
+                            let code = error.response.data.code;
+                            if (code === 611) {
+                                self.msg = "不存在该员工id";
+                                self.alerts = 'alert alert-danger';
+                                self.submitFlag = false;
+                            } else if (code === 621) {
+                                self.submitFlag = true;
+                                self.queryWage();
+                            }
+                        });
+                }else {
+                    let info = "请确认输入参数";
+                    if (!this.yearFlag) {
+                        info += " _年_ ";
+                    }
+                    if (!this.idFlag) {
+                        info += " _id_ ";
+                    }
+                    if (!this.monthFlag) {
+                        info += " _月_ ";
+                    }
+                    this.msg = info + '正确';
+                    this.alerts = 'alert alert-danger';
+                }
             },
 
             queryWage: function () {

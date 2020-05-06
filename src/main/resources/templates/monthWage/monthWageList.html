@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout (~{::body},'owners','员工月收入确认')}">
+      th:replace="~{fragments/layout :: layout (~{::body},'owners','员工月收入查询')}">
 <body>
 <div id="queryInfo" class="container my-5">
     <div v-bind:class="alerts">
@@ -101,7 +101,7 @@
                 pagination: true,
                 classes: 'table table-bordered table-hover table-striped',
             },
-            msg: '',
+            msg: '员工月收入查询',
             selectInfo: true
         },
         created: function () {
@@ -110,7 +110,8 @@
             // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
             // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
             // 请参考：https://lodash.com/docs#debounce
-            this.getMessage();
+            // this.getMessage();
+            this.idFlag = true;
         },
         methods: {
             getSelect: function () {
@@ -118,11 +119,26 @@
                 console.log(this.row);
             },
             getMessage: function () {
-                let url = 'https://127.0.0.1:8080/api/v1/staffWages/' + this.year + "/" + this.month;
-                if(this.judgeId()){
-                    url += "/" + this.id;
+                if (this.yearFlag && this.monthFlag && this.idFlag){
+                    let url = 'https://127.0.0.1:8080/api/v1/staffWages/' + this.year + "/" + this.month;
+                    if(this.judgeId()){
+                        url += "/" + this.id;
+                    }
+                    this.axiosGet(url);
+                }else {
+                    let info = "请确认输入参数";
+                    if (!this.yearFlag) {
+                        info += " _年_ ";
+                    }
+                    if (!this.monthFlag) {
+                        info += " _月_ ";
+                    }
+                    if (!this.idFlag) {
+                        info += " _id_ ";
+                    }
+                    this.msg = info + '正确';
+                    this.alerts = 'alert alert-danger';
                 }
-                this.axiosGet(url);
             },
             axiosGet: function (url) {
                 let self = this;

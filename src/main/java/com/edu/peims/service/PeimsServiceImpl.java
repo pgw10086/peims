@@ -197,7 +197,6 @@ public class PeimsServiceImpl implements PeimsService {
     @Override
     public ConfirmedInfo getUnConfirmedMonthWage(int id, String date)
             throws UserNotFoundException, TaxNotFoundException {
-        //TODO
         User user = findUserById(id);
         Position position = findPositionById(user.getPostionId()).iterator().next();
         ConfirmedInfo confirmedInfo = new ConfirmedInfo();
